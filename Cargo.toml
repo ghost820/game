@@ -1,0 +1,15 @@
+[package]
+name = "game"
+version = "0.1.0"
+edition = "2024"
+
+[lints.clippy]
+identity_op = "allow"
+
+[lib]
+test = false
+bench = false
+doctest = false
+
+[dependencies]
+libm = "0.2"
