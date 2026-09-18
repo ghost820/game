@@ -1,9 +1,9 @@
 #![no_std]
 
+pub mod body;
 pub mod color;
 pub mod draw;
 pub mod math;
-pub mod particle;
 pub mod physics;
 
 use crate::color::Rgba;

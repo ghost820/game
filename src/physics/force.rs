@@ -9,6 +9,10 @@ pub const fn weight(mass: f32) -> Vec2 {
 // TODO: Replace k with real world constants?
 // TODO: Handle drag > vel?
 pub fn drag(vel: Vec2, k: f32) -> Vec2 {
+    if vel.approx_eq(Vec2::ZERO) {
+        return Vec2::ZERO;
+    }
+
     let dir = vel.normalized().negated();
     let mag = k * vel.mag_sq();
     Vec2::from_dir_mag(dir, mag)
@@ -16,6 +20,10 @@ pub fn drag(vel: Vec2, k: f32) -> Vec2 {
 
 // TODO: Replace k with real world constants, especially normal?
 pub fn friction(vel: Vec2, k: f32) -> Vec2 {
+    if vel.approx_eq(Vec2::ZERO) {
+        return Vec2::ZERO;
+    }
+
     let dir = vel.normalized().negated();
     Vec2::from_dir_mag(dir, k)
 }
