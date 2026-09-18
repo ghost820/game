@@ -272,3 +272,9 @@ impl Vec2 {
         result
     }
 }
+
+pub fn wrap_angle_rad(angle: f32) -> f32 {
+    let angle = libm::fmodf(angle, TAU);
+
+    if angle < 0.0 { angle + TAU } else { angle }
+}
