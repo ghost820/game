@@ -14,13 +14,14 @@ pub struct Body {
     mass_inv: f32,
     inert: f32,
     inert_inv: f32,
+    restitution: f32,
     force: Vec2,
     torque: f32,
     geom: Geometry,
 }
 
 impl Body {
-    pub const fn new(geom: Geometry, pos: Vec2, mass: f32) -> Self {
+    pub const fn new(geom: Geometry, pos: Vec2, mass: f32, restitution: f32) -> Self {
         debug_assert!(mass.is_normal() && mass > 0.0);
 
         let mass_inv = 1.0 / mass;
@@ -29,6 +30,8 @@ impl Body {
         let inert_inv = 1.0 / inert;
         debug_assert!(inert.is_finite() && inert > 0.0);
         debug_assert!(inert_inv.is_finite() && inert_inv > 0.0);
+
+        debug_assert!(restitution >= 0.0 && restitution <= 1.0);
 
         Self {
             pos,
@@ -41,37 +44,21 @@ impl Body {
             mass_inv,
             inert,
             inert_inv,
+            restitution,
             force: Vec2::ZERO,
             torque: 0.0,
             geom,
         }
     }
 
-    pub const fn from_raw_coords(geom: Geometry, x: f32, y: f32, mass: f32) -> Self {
-        debug_assert!(mass.is_normal() && mass > 0.0);
-
-        let mass_inv = 1.0 / mass;
-
-        let inert = geom.inert(mass);
-        let inert_inv = 1.0 / inert;
-        debug_assert!(inert.is_finite() && inert > 0.0);
-        debug_assert!(inert_inv.is_finite() && inert_inv > 0.0);
-
-        Self {
-            pos: Vec2::new(x, y),
-            vel: Vec2::ZERO,
-            acc: Vec2::ZERO,
-            rot: 0.0,
-            ang_vel: 0.0,
-            ang_acc: 0.0,
-            mass,
-            mass_inv,
-            inert,
-            inert_inv,
-            force: Vec2::ZERO,
-            torque: 0.0,
-            geom,
-        }
+    pub const fn from_raw_coords(
+        geom: Geometry,
+        x: f32,
+        y: f32,
+        mass: f32,
+        restitution: f32,
+    ) -> Self {
+        Self::new(geom, Vec2::new(x, y), mass, restitution)
     }
 
     pub const fn x(&self) -> f32 {
@@ -80,6 +67,10 @@ impl Body {
 
     pub const fn y(&self) -> f32 {
         self.pos.y()
+    }
+
+    pub const fn pos(&self) -> Vec2 {
+        self.pos
     }
 
     pub const fn vel(&self) -> Vec2 {
@@ -92,6 +83,14 @@ impl Body {
 
     pub const fn mass(&self) -> f32 {
         self.mass
+    }
+
+    pub const fn mass_inv(&self) -> f32 {
+        self.mass_inv
+    }
+
+    pub const fn restitution(&self) -> f32 {
+        self.restitution
     }
 
     pub const fn geom(&self) -> &Geometry {
@@ -112,6 +111,10 @@ impl Body {
 
     pub const fn apply_force(&mut self, force: Vec2) {
         self.force.addi(force.scaled(PIXELS_PER_METER as f32));
+    }
+
+    pub const fn apply_impulse(&mut self, j: Vec2) {
+        self.vel.addi(j.scaled(self.mass_inv))
     }
 
     pub const fn apply_torque(&mut self, torque: f32) {

@@ -1,6 +1,7 @@
 #![no_std]
 
 pub mod body;
+pub mod collision;
 pub mod color;
 pub mod draw;
 pub mod math;
