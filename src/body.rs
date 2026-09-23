@@ -82,6 +82,10 @@ impl Body {
         self.pos.y()
     }
 
+    pub const fn pos(&self) -> Vec2 {
+        self.pos
+    }
+
     pub const fn vel(&self) -> Vec2 {
         self.vel
     }
@@ -92,6 +96,10 @@ impl Body {
 
     pub const fn mass(&self) -> f32 {
         self.mass
+    }
+
+    pub const fn mass_inv(&self) -> f32 {
+        self.mass_inv
     }
 
     pub const fn geom(&self) -> &Geometry {
